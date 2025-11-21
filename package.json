@@ -1,0 +1,27 @@
+{
+  "name": "mentorher-backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/VivianaCastro2002/MentorHer-Backend.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/VivianaCastro2002/MentorHer-Backend/issues"
+  },
+  "homepage": "https://github.com/VivianaCastro2002/MentorHer-Backend#readme",
+  "description": "",
+  "dependencies": {
+    "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.11"
+  }
+}
