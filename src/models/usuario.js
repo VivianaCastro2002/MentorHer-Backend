@@ -1,4 +1,4 @@
-module.exports = (sequelize, DataTypes) => {
+export default (sequelize, DataTypes) => {
   return sequelize.define('Usuario', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     nombre: { type: DataTypes.STRING(255), allowNull: false },
@@ -18,6 +18,5 @@ module.exports = (sequelize, DataTypes) => {
     timestamps: true,  
     createdAt: 'creado_en',
     updatedAt: 'actualizado_en'
-}
-);
+  });
 };

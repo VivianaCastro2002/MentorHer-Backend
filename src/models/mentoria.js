@@ -1,4 +1,4 @@
-module.exports = (sequelize, DataTypes) => {
+export default (sequelize, DataTypes) => {
   return sequelize.define('Mentoria', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     mentora_id: { type: DataTypes.INTEGER, allowNull: false },
@@ -22,12 +22,12 @@ module.exports = (sequelize, DataTypes) => {
     updatedAt: 'actualizado_en',
     indexes: [
       {
-            unique: true,
-            fields: ['mentora_id','mentoreada_id'],
-            where: {
-                estado: 'activa'
-            }
+        unique: true,
+        fields: ['mentora_id','mentoreada_id'],
+        where: {
+          estado: 'activa'
         }
+      }
     ]
   });
 };

@@ -1,4 +1,4 @@
-module.exports = (sequelize, DataTypes) => {
+export default (sequelize, DataTypes) => {
   return sequelize.define('ArchivoSesion', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     sesion_id: { type: DataTypes.INTEGER, allowNull: false },

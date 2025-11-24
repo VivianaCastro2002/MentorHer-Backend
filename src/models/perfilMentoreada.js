@@ -1,4 +1,4 @@
-module.exports = (sequelize, DataTypes) => {
+export default (sequelize, DataTypes) => {
   return sequelize.define('PerfilMentoreada', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     usuario_id: { type: DataTypes.INTEGER, allowNull: false, unique: true },

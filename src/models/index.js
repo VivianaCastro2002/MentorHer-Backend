@@ -1,4 +1,21 @@
-const { Sequelize, DataTypes } = require('sequelize');
+import { Sequelize, DataTypes } from 'sequelize';
+
+import createUsuario from './usuario.js';
+import createPerfilMentora from './perfilMentora.js';
+import createPerfilMentoreada from './perfilMentoreada.js';
+import createPaper from './paper.js';
+import createEtiqueta from './etiqueta.js';
+import createUsuarioEtiqueta from './usuarioEtiqueta.js';
+import createDisponibilidadBloque from './disponibilidadBloque.js';
+import createSolicitudConexion from './solicitudConexion.js';
+import createMentoria from './mentoria.js';
+import createSesion from './sesion.js';
+import createArchivoSesion from './archivoSesion.js';
+import createFeedbackSesion from './feedbackSesion.js';
+import createEncuestaPrivadaSesion from './encuestaPrivadaSesion.js';
+import createTicketSoporte from './ticketSoporte.js';
+import createEnlaceUsuario from './enlaceUsuario.js';
+
 const config = {
   database: process.env.DB_NAME || 'mentorher',
   username: process.env.DB_USER || 'postgres',
@@ -15,21 +32,22 @@ const sequelize = new Sequelize(config.database, config.username, config.passwor
   timezone: '+00:00',
 });
 
-const Usuario = require('./usuario')(sequelize, DataTypes);
-const PerfilMentora = require('./perfilMentora')(sequelize, DataTypes);
-const PerfilMentoreada = require('./perfilMentoreada')(sequelize, DataTypes);
-const Paper = require('./paper')(sequelize, DataTypes);
-const Etiqueta = require('./etiqueta')(sequelize, DataTypes);
-const UsuarioEtiqueta = require('./usuarioEtiqueta')(sequelize, DataTypes);
-const DisponibilidadBloque = require('./disponibilidadBloque')(sequelize, DataTypes);
-const SolicitudConexion = require('./solicitudConexion')(sequelize, DataTypes);
-const Mentoria = require('./mentoria')(sequelize, DataTypes);
-const Sesion = require('./sesion')(sequelize, DataTypes);
-const ArchivoSesion = require('./archivoSesion')(sequelize, DataTypes);
-const FeedbackSesion = require('./feedbackSesion')(sequelize, DataTypes);
-const EncuestaPrivadaSesion = require('./encuestaPrivadaSesion')(sequelize, DataTypes);
-const TicketSoporte = require('./ticketSoporte')(sequelize, DataTypes);
-const EnlaceUsuario = require('./enlaceUsuario')(sequelize, DataTypes);
+// Inicializar modelos
+const Usuario = createUsuario(sequelize, DataTypes);
+const PerfilMentora = createPerfilMentora(sequelize, DataTypes);
+const PerfilMentoreada = createPerfilMentoreada(sequelize, DataTypes);
+const Paper = createPaper(sequelize, DataTypes);
+const Etiqueta = createEtiqueta(sequelize, DataTypes);
+const UsuarioEtiqueta = createUsuarioEtiqueta(sequelize, DataTypes);
+const DisponibilidadBloque = createDisponibilidadBloque(sequelize, DataTypes);
+const SolicitudConexion = createSolicitudConexion(sequelize, DataTypes);
+const Mentoria = createMentoria(sequelize, DataTypes);
+const Sesion = createSesion(sequelize, DataTypes);
+const ArchivoSesion = createArchivoSesion(sequelize, DataTypes);
+const FeedbackSesion = createFeedbackSesion(sequelize, DataTypes);
+const EncuestaPrivadaSesion = createEncuestaPrivadaSesion(sequelize, DataTypes);
+const TicketSoporte = createTicketSoporte(sequelize, DataTypes);
+const EnlaceUsuario = createEnlaceUsuario(sequelize, DataTypes);
 
 // ---------- Associations ----------
 
@@ -102,7 +120,7 @@ TicketSoporte.belongsTo(Usuario, { foreignKey: 'admin_asignado_id', as: 'adminAs
 Usuario.hasMany(EnlaceUsuario, { foreignKey: 'usuario_id', as: 'enlaces' });
 EnlaceUsuario.belongsTo(Usuario, { foreignKey: 'usuario_id', as: 'usuario' });
 
-module.exports = {
+export {
   sequelize,
   Sequelize,
   Usuario,

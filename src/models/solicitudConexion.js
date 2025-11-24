@@ -1,4 +1,4 @@
-module.exports = (sequelize, DataTypes) => {
+export default (sequelize, DataTypes) => {
   return sequelize.define('SolicitudConexion', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     mentoreada_id: { type: DataTypes.INTEGER, allowNull: false },
