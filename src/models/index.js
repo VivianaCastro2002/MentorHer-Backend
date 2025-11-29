@@ -1,20 +1,21 @@
 import { Sequelize, DataTypes } from 'sequelize';
 
-import createUsuario from './usuario.js';
-import createPerfilMentora from './perfilMentora.js';
-import createPerfilMentoreada from './perfilMentoreada.js';
+// Models (refactored to English + UUID + schema "models")
+import createUser from './user.js';
+import createMentorProfile from './mentorProfile.js';
+import createMenteeProfile from './menteeProfile.js';
 import createPaper from './paper.js';
-import createEtiqueta from './etiqueta.js';
-import createUsuarioEtiqueta from './usuarioEtiqueta.js';
-import createDisponibilidadBloque from './disponibilidadBloque.js';
-import createSolicitudConexion from './solicitudConexion.js';
-import createMentoria from './mentoria.js';
-import createSesion from './sesion.js';
-import createArchivoSesion from './archivoSesion.js';
-import createFeedbackSesion from './feedbackSesion.js';
-import createEncuestaPrivadaSesion from './encuestaPrivadaSesion.js';
-import createTicketSoporte from './ticketSoporte.js';
-import createEnlaceUsuario from './enlaceUsuario.js';
+import createTag from './tag.js';
+import createUserTag from './userTag.js';
+import createAvailabilityBlock from './availabilityBlock.js';
+import createConnectionRequest from './connectionRequest.js';
+import createMentorship from './mentorship.js';
+import createSession from './session.js';
+import createSessionFile from './sessionFile.js';
+import createSessionFeedback from './sessionFeedback.js';
+import createPrivateSessionSurvey from './privateSessionSurvey.js';
+import createSupportTicket from './supportTicket.js';
+import createUserLink from './userLink.js';
 
 const config = {
   database: process.env.DB_NAME || 'mentorher',
@@ -32,110 +33,162 @@ const sequelize = new Sequelize(config.database, config.username, config.passwor
   timezone: '+00:00',
 });
 
-// Inicializar modelos
-const Usuario = createUsuario(sequelize, DataTypes);
-const PerfilMentora = createPerfilMentora(sequelize, DataTypes);
-const PerfilMentoreada = createPerfilMentoreada(sequelize, DataTypes);
+// ---------- Initialize models ----------
+
+const User = createUser(sequelize, DataTypes);
+const MentorProfile = createMentorProfile(sequelize, DataTypes);
+const MenteeProfile = createMenteeProfile(sequelize, DataTypes);
 const Paper = createPaper(sequelize, DataTypes);
-const Etiqueta = createEtiqueta(sequelize, DataTypes);
-const UsuarioEtiqueta = createUsuarioEtiqueta(sequelize, DataTypes);
-const DisponibilidadBloque = createDisponibilidadBloque(sequelize, DataTypes);
-const SolicitudConexion = createSolicitudConexion(sequelize, DataTypes);
-const Mentoria = createMentoria(sequelize, DataTypes);
-const Sesion = createSesion(sequelize, DataTypes);
-const ArchivoSesion = createArchivoSesion(sequelize, DataTypes);
-const FeedbackSesion = createFeedbackSesion(sequelize, DataTypes);
-const EncuestaPrivadaSesion = createEncuestaPrivadaSesion(sequelize, DataTypes);
-const TicketSoporte = createTicketSoporte(sequelize, DataTypes);
-const EnlaceUsuario = createEnlaceUsuario(sequelize, DataTypes);
+const Tag = createTag(sequelize, DataTypes);
+const UserTag = createUserTag(sequelize, DataTypes);
+const AvailabilityBlock = createAvailabilityBlock(sequelize, DataTypes);
+const ConnectionRequest = createConnectionRequest(sequelize, DataTypes);
+const Mentorship = createMentorship(sequelize, DataTypes);
+const Session = createSession(sequelize, DataTypes);
+const SessionFile = createSessionFile(sequelize, DataTypes);
+const SessionFeedback = createSessionFeedback(sequelize, DataTypes);
+const PrivateSessionSurvey = createPrivateSessionSurvey(sequelize, DataTypes);
+const SupportTicket = createSupportTicket(sequelize, DataTypes);
+const UserLink = createUserLink(sequelize, DataTypes);
 
 // ---------- Associations ----------
 
-// Perfiles 1:1
-Usuario.hasOne(PerfilMentora, { foreignKey: 'usuario_id', as: 'perfilMentora' });
-PerfilMentora.belongsTo(Usuario, { foreignKey: 'usuario_id', as: 'usuario' });
+// Profiles 1:1
+User.hasOne(MentorProfile, { foreignKey: 'user_id', as: 'mentorProfile' });
+MentorProfile.belongsTo(User, { foreignKey: 'user_id', as: 'user' });
 
-Usuario.hasOne(PerfilMentoreada, { foreignKey: 'usuario_id', as: 'perfilMentoreada' });
-PerfilMentoreada.belongsTo(Usuario, { foreignKey: 'usuario_id', as: 'usuario' });
+User.hasOne(MenteeProfile, { foreignKey: 'user_id', as: 'menteeProfile' });
+MenteeProfile.belongsTo(User, { foreignKey: 'user_id', as: 'user' });
 
 // Papers (1:N)
-Usuario.hasMany(Paper, { foreignKey: 'usuario_id', as: 'papers' });
-Paper.belongsTo(Usuario, { foreignKey: 'usuario_id', as: 'usuario' });
+User.hasMany(Paper, { foreignKey: 'user_id', as: 'papers' });
+Paper.belongsTo(User, { foreignKey: 'user_id', as: 'user' });
 
-// Etiquetas M:N
-Usuario.belongsToMany(Etiqueta, {
-  through: UsuarioEtiqueta,
-  foreignKey: 'usuario_id',
-  otherKey: 'etiqueta_id',
-  as: 'etiquetas'
+// Tags M:N
+User.belongsToMany(Tag, {
+  through: UserTag,
+  foreignKey: 'user_id',
+  otherKey: 'tag_id',
+  as: 'tags',
 });
-Etiqueta.belongsToMany(Usuario, {
-  through: UsuarioEtiqueta,
-  foreignKey: 'etiqueta_id',
-  otherKey: 'usuario_id',
-  as: 'usuarios'
+Tag.belongsToMany(User, {
+  through: UserTag,
+  foreignKey: 'tag_id',
+  otherKey: 'user_id',
+  as: 'users',
 });
-UsuarioEtiqueta.belongsTo(Usuario, { foreignKey: 'usuario_id' });
-UsuarioEtiqueta.belongsTo(Etiqueta, { foreignKey: 'etiqueta_id' });
+UserTag.belongsTo(User, { foreignKey: 'user_id' });
+UserTag.belongsTo(Tag, { foreignKey: 'tag_id' });
 
-// Disponibilidad
-Usuario.hasMany(DisponibilidadBloque, { foreignKey: 'mentora_id', as: 'disponibilidad' });
-DisponibilidadBloque.belongsTo(Usuario, { foreignKey: 'mentora_id', as: 'mentora' });
+// Availability (mentor availability blocks)
+User.hasMany(AvailabilityBlock, { foreignKey: 'mentor_id', as: 'availability' });
+AvailabilityBlock.belongsTo(User, { foreignKey: 'mentor_id', as: 'mentor' });
 
-// Solicitudes y mentorías
-Usuario.hasMany(SolicitudConexion, { foreignKey: 'mentoreada_id', as: 'solicitudesEnviadas' });
-Usuario.hasMany(SolicitudConexion, { foreignKey: 'mentora_id', as: 'solicitudesRecibidas' });
-SolicitudConexion.belongsTo(Usuario, { foreignKey: 'mentoreada_id', as: 'mentoreada' });
-SolicitudConexion.belongsTo(Usuario, { foreignKey: 'mentora_id', as: 'mentora' });
+// Connection requests and mentorships
+User.hasMany(ConnectionRequest, {
+  foreignKey: 'mentee_id',
+  as: 'sentConnectionRequests',
+});
+User.hasMany(ConnectionRequest, {
+  foreignKey: 'mentor_id',
+  as: 'receivedConnectionRequests',
+});
+ConnectionRequest.belongsTo(User, { foreignKey: 'mentee_id', as: 'mentee' });
+ConnectionRequest.belongsTo(User, { foreignKey: 'mentor_id', as: 'mentor' });
 
-Usuario.hasMany(Mentoria, { foreignKey: 'mentora_id', as: 'mentoriasComoMentora' });
-Usuario.hasMany(Mentoria, { foreignKey: 'mentoreada_id', as: 'mentoriasComoMentoreada' });
-Mentoria.belongsTo(Usuario, { foreignKey: 'mentora_id', as: 'mentora' });
-Mentoria.belongsTo(Usuario, { foreignKey: 'mentoreada_id', as: 'mentoreada' });
+User.hasMany(Mentorship, {
+  foreignKey: 'mentor_id',
+  as: 'mentorshipsAsMentor',
+});
+User.hasMany(Mentorship, {
+  foreignKey: 'mentee_id',
+  as: 'mentorshipsAsMentee',
+});
+Mentorship.belongsTo(User, { foreignKey: 'mentor_id', as: 'mentor' });
+Mentorship.belongsTo(User, { foreignKey: 'mentee_id', as: 'mentee' });
 
-SolicitudConexion.hasMany(Mentoria, { foreignKey: 'solicitud_conexion_id' });
-Mentoria.belongsTo(SolicitudConexion, { foreignKey: 'solicitud_conexion_id' });
+ConnectionRequest.hasMany(Mentorship, {
+  foreignKey: 'connection_request_id',
+  as: 'mentorships',
+});
+Mentorship.belongsTo(ConnectionRequest, {
+  foreignKey: 'connection_request_id',
+  as: 'connectionRequest',
+});
 
-// Sesiones dentro de mentoría
-Mentoria.hasMany(Sesion, { foreignKey: 'mentoria_id', as: 'sesiones' });
-Sesion.belongsTo(Mentoria, { foreignKey: 'mentoria_id', as: 'mentoria' });
+// Sessions within a mentorship
+Mentorship.hasMany(Session, {
+  foreignKey: 'mentorship_id',
+  as: 'sessions',
+});
+Session.belongsTo(Mentorship, {
+  foreignKey: 'mentorship_id',
+  as: 'mentorship',
+});
 
-// Archivos, feedback, encuestas
-Sesion.hasMany(ArchivoSesion, { foreignKey: 'sesion_id', as: 'archivos' });
-ArchivoSesion.belongsTo(Sesion, { foreignKey: 'sesion_id' });
+// Files, feedback, surveys per session
+Session.hasMany(SessionFile, {
+  foreignKey: 'session_id',
+  as: 'files',
+});
+SessionFile.belongsTo(Session, { foreignKey: 'session_id', as: 'session' });
 
-Sesion.hasMany(FeedbackSesion, { foreignKey: 'sesion_id', as: 'feedbacks' });
-FeedbackSesion.belongsTo(Sesion, { foreignKey: 'sesion_id' });
-FeedbackSesion.belongsTo(Usuario, { foreignKey: 'reviewer_id', as: 'reviewer' });
+Session.hasMany(SessionFeedback, {
+  foreignKey: 'session_id',
+  as: 'feedbacks',
+});
+SessionFeedback.belongsTo(Session, {
+  foreignKey: 'session_id',
+  as: 'session',
+});
+SessionFeedback.belongsTo(User, {
+  foreignKey: 'reviewer_id',
+  as: 'reviewer',
+});
 
-Sesion.hasOne(EncuestaPrivadaSesion, { foreignKey: 'sesion_id', as: 'encuestaPrivada' });
-EncuestaPrivadaSesion.belongsTo(Sesion, { foreignKey: 'sesion_id' });
-EncuestaPrivadaSesion.belongsTo(Usuario, { foreignKey: 'mentora_id', as: 'mentora' });
+Session.hasOne(PrivateSessionSurvey, {
+  foreignKey: 'session_id',
+  as: 'privateSurvey',
+});
+PrivateSessionSurvey.belongsTo(Session, {
+  foreignKey: 'session_id',
+  as: 'session',
+});
+PrivateSessionSurvey.belongsTo(User, {
+  foreignKey: 'mentor_id',
+  as: 'mentor',
+});
 
-// Tickets y enlaces
-Usuario.hasMany(TicketSoporte, { foreignKey: 'usuario_id', as: 'tickets' });
-TicketSoporte.belongsTo(Usuario, { foreignKey: 'usuario_id', as: 'usuario' });
-TicketSoporte.belongsTo(Usuario, { foreignKey: 'admin_asignado_id', as: 'adminAsignado' });
+// Support tickets and user links
+User.hasMany(SupportTicket, { foreignKey: 'user_id', as: 'tickets' });
+SupportTicket.belongsTo(User, {
+  foreignKey: 'user_id',
+  as: 'user',
+});
+SupportTicket.belongsTo(User, {
+  foreignKey: 'assigned_admin_id',
+  as: 'assignedAdmin',
+});
 
-Usuario.hasMany(EnlaceUsuario, { foreignKey: 'usuario_id', as: 'enlaces' });
-EnlaceUsuario.belongsTo(Usuario, { foreignKey: 'usuario_id', as: 'usuario' });
+User.hasMany(UserLink, { foreignKey: 'user_id', as: 'links' });
+UserLink.belongsTo(User, { foreignKey: 'user_id', as: 'user' });
 
 export {
   sequelize,
   Sequelize,
-  Usuario,
-  PerfilMentora,
-  PerfilMentoreada,
+  User,
+  MentorProfile,
+  MenteeProfile,
   Paper,
-  Etiqueta,
-  UsuarioEtiqueta,
-  DisponibilidadBloque,
-  SolicitudConexion,
-  Mentoria,
-  Sesion,
-  ArchivoSesion,
-  FeedbackSesion,
-  EncuestaPrivadaSesion,
-  TicketSoporte,
-  EnlaceUsuario,
+  Tag,
+  UserTag,
+  AvailabilityBlock,
+  ConnectionRequest,
+  Mentorship,
+  Session,
+  SessionFile,
+  SessionFeedback,
+  PrivateSessionSurvey,
+  SupportTicket,
+  UserLink,
 };
